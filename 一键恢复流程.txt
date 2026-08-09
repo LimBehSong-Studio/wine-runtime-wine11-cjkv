@@ -1,0 +1,18 @@
+2. 给整个归档目录打包（可选但推荐）
+
+现在这个目录已经是一个完整 release 包：
+
+cd ~
+
+tar -czvf wine-runtime-wine11-cjkv-fcitx5-20260712-release.tar.gz \
+wine-runtime-wine11-cjkv-fcitx5-20260712
+
+以后换电脑：
+
+tar -xzvf wine-runtime-wine11-cjkv-fcitx5-20260712-release.tar.gz
+
+然后：
+
+docker load -i wine-runtime-wine11-cjkv-fcitx5.tar
+
+直接恢复。

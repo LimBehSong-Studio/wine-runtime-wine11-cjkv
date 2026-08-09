@@ -1,0 +1,122 @@
+#!/bin/bash
+
+set -e
+
+BUILTIN_FONT_SRC=/usr/share/fonts/custom
+EXTRA_FONT_SRC=/opt/extra_fonts
+
+FONT_DST=$WINEPREFIX/drive_c/windows/Fonts
+
+font_count=0
+
+
+mkdir -p "$FONT_DST"
+
+
+echo "=== Font Setup ==="
+
+
+
+register_font()
+{
+    local font_file="$1"
+
+    local filename
+    filename=$(basename "$font_file")
+
+
+    case "$filename" in
+
+        *.ttf|*.TTF|*.ttc|*.TTC|*.otf|*.OTF)
+            ;;
+        *)
+            return
+            ;;
+    esac
+
+
+    echo "Registering font: $filename"
+
+
+    wine reg add \
+    "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Fonts" \
+    /v "$filename" \
+    /d "$filename" \
+    /f || true
+
+}
+
+
+
+install_fonts()
+{
+    local SRC="$1"
+
+
+    if [ ! -d "$SRC" ]; then
+        return
+    fi
+
+
+    echo "Scanning: $SRC"
+
+
+
+    while IFS= read -r font
+    do
+
+        filename=$(basename "$font")
+
+
+        echo "Installing: $filename"
+
+
+        ln -sf "$font" \
+        "$FONT_DST/$filename"
+
+
+        register_font "$font"
+
+
+        font_count=$((font_count+1))
+
+
+    done < <(
+        find "$SRC" -type f \
+        \( \
+        -iname "*.ttf" \
+        -o -iname "*.ttc" \
+        -o -iname "*.otf" \
+        \)
+    )
+
+}
+
+
+
+install_fonts "$BUILTIN_FONT_SRC"
+
+install_fonts "$EXTRA_FONT_SRC"
+
+
+
+echo "Rebuilding font cache..."
+
+fc-cache -f >/dev/null 2>&1 || true
+
+
+echo "Installed fonts: $font_count"
+
+
+if [ "$font_count" -eq 0 ]; then
+
+echo ""
+echo "WARNING:"
+echo "No fonts installed."
+echo "Chinese applications may display missing glyph boxes."
+echo ""
+
+fi
+
+
+echo "Font setup complete."

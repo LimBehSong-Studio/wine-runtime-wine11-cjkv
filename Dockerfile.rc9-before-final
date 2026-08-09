@@ -1,0 +1,123 @@
+FROM ubuntu:22.04
+
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Asia/Shanghai
+
+
+RUN apt update && apt install -y \
+    software-properties-common \
+    wget \
+    curl \
+    ca-certificates \
+    gnupg \
+    locales \
+    dbus-x11 \
+    x11-utils \
+    xauth \
+    fcitx5 \
+    fcitx5-chinese-addons \
+    fcitx5-module-xorg \
+    fonts-wqy-microhei \
+    fonts-wqy-zenhei \
+    fontconfig \
+    winbind \
+    cabextract \
+    unzip \
+    p7zip-full \
+    procps \
+    file \
+    libvulkan1 \
+    libvulkan1:i386 \
+    mesa-vulkan-drivers \
+    mesa-vulkan-drivers:i386 \
+    && rm -rf /var/lib/apt/lists/*
+
+
+
+RUN locale-gen zh_CN.UTF-8
+
+
+
+RUN dpkg --add-architecture i386 && \
+    mkdir -pm755 /etc/apt/keyrings && \
+    wget -O /etc/apt/keyrings/winehq-archive.key \
+    https://dl.winehq.org/wine-builds/winehq.key
+
+
+
+RUN wget -NP /etc/apt/sources.list.d/ \
+    https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
+
+
+
+RUN apt update && apt install -y \
+    winehq-stable \
+    && rm -rf /var/lib/apt/lists/*
+
+
+
+# Public container user
+
+RUN useradd -m -u 1000 wineuser && \
+    mkdir -p /opt/wineprefix && \
+    chown -R wineuser:wineuser /opt/wineprefix
+
+
+
+#######################################
+# Runtime scripts
+#######################################
+
+COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+COPY scripts/init-fonts.sh /usr/local/bin/init-fonts.sh
+
+COPY scripts/launcher.sh /usr/local/bin/launcher.sh
+
+
+
+RUN chmod +x /usr/local/bin/entrypoint.sh && \
+    chmod +x /usr/local/bin/init-fonts.sh && \
+    chmod +x /usr/local/bin/launcher.sh
+
+
+
+#######################################
+# Built-in open source fonts
+#######################################
+
+COPY fonts/ /usr/share/fonts/custom/
+
+
+
+RUN chmod -R 755 /usr/share/fonts/custom/ && \
+    fc-cache -fv
+
+
+
+USER wineuser
+
+
+
+ENV HOME=/home/wineuser
+
+ENV WINEPREFIX=/opt/wineprefix
+
+ENV WINEARCH=win64
+
+
+
+ENV LANG=zh_CN.UTF-8
+
+ENV LANGUAGE=zh_CN:zh
+
+ENV LC_ALL=zh_CN.UTF-8
+
+
+
+WORKDIR /home/wineuser
+
+
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

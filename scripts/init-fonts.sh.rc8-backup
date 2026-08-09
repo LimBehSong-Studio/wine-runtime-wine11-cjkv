@@ -1,0 +1,92 @@
+#!/bin/bash
+
+set -e
+
+FONT_SRC=/opt/extra_fonts
+FONT_DST=$WINEPREFIX/drive_c/windows/Fonts
+
+font_count=0
+
+mkdir -p "$FONT_DST"
+
+echo "=== Font Setup ==="
+
+register_font()
+{
+    local font_file="$1"
+
+    local filename
+    filename=$(basename "$font_file")
+
+    case "$filename" in
+        *.ttf|*.TTF)
+            font_type="TrueType"
+            ;;
+        *.otf|*.OTF)
+            font_type="OpenType"
+            ;;
+        *.ttc|*.TTC)
+            font_type="TrueType Collection"
+            ;;
+        *)
+            return
+            ;;
+    esac
+
+    echo "Registering font: $filename"
+
+    wine reg add \
+    "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Fonts" \
+    /v "$filename ($font_type)" \
+    /d "$filename" \
+    /f || true
+}
+
+if [ -d "$FONT_SRC" ]; then
+
+    echo "Checking external fonts..."
+
+    for f in "$FONT_SRC"/*; do
+
+        [ -e "$f" ] || continue
+
+        case "$f" in
+
+            *.ttf|*.TTF|*.ttc|*.TTC|*.otf|*.OTF)
+
+                echo "Installing font: $(basename "$f")"
+
+                font_count=$((font_count+1))
+
+                ln -sf "$f" \
+                "$FONT_DST/$(basename "$f")"
+
+                register_font "$f"
+
+                ;;
+
+            *)
+
+                echo "Skipping non-font file: $(basename "$f")"
+
+                ;;
+
+        esac
+
+    done
+
+else
+
+    echo "No external fonts found."
+
+fi
+
+echo "Rebuilding font cache..."
+
+fc-cache -f >/dev/null 2>&1 || true
+
+echo "Font cache updated."
+
+echo "Installed external fonts: $font_count"
+
+echo "Font setup complete."

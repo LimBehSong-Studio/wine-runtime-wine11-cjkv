@@ -1,0 +1,12 @@
+*.tar
+*.tar.gz
+
+*.log
+
+.wine/
+wineprefix/
+
+# Large binary dependencies
+fonts/*.ttc
+mono/*.msi
+gecko/*.msi

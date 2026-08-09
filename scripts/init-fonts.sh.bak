@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -e
+
+FONT_SRC=/opt/extra_fonts
+FONT_DST=$WINEPREFIX/drive_c/windows/Fonts
+
+
+mkdir -p "$FONT_DST"
+
+
+echo "=== Font Setup ==="
+
+
+# External font injection
+if [ -d "$FONT_SRC" ]; then
+
+    echo "Checking external fonts..."
+
+    for f in "$FONT_SRC"/*; do
+
+        [ -e "$f" ] || continue
+
+        case "$f" in
+
+            *.ttf|*.TTF|*.ttc|*.TTC|*.otf|*.OTF)
+
+                echo "Installing font: $(basename "$f")"
+
+                ln -sf "$f" "$FONT_DST/$(basename "$f")"
+
+                ;;
+
+            *)
+
+                echo "Skipping non-font file: $(basename "$f")"
+
+                ;;
+
+        esac
+
+    done
+
+fi
+
+
+# Register Haifeng Extended Fonts
+
+if [ -f "$FONT_DST/Sun-ExtA.ttf" ]; then
+
+    echo "Registering Sun-ExtA"
+
+    wine reg add \
+    "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Fonts" \
+    /v "Sun-ExtA (TrueType)" \
+    /d "Sun-ExtA.ttf" \
+    /f || true
+
+fi
+
+
+if [ -f "$FONT_DST/Sun-ExtB.ttf" ]; then
+
+    echo "Registering Sun-ExtB"
+
+    wine reg add \
+    "HKLM\Software\Microsoft\Windows NT\CurrentVersion\Fonts" \
+    /v "Sun-ExtB (TrueType)" \
+    /d "Sun-ExtB.ttf" \
+    /f || true
+
+fi
+
+
+fc-cache -fv || true
+echo "Font setup complete."

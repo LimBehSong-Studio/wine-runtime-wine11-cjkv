@@ -1,0 +1,74 @@
+#!/bin/bash
+
+set -e
+
+echo "=== Wine Runtime Starting ==="
+
+
+export HOME=/home/wineuser
+
+export WINEPREFIX=/opt/wineprefix
+
+export WINEARCH=win64
+
+
+export PATH=/usr/bin:/bin:$PATH
+
+
+export XDG_RUNTIME_DIR=/tmp/runtime-$(id -u)
+
+mkdir -p "$XDG_RUNTIME_DIR"
+
+chmod 700 "$XDG_RUNTIME_DIR"
+
+
+
+export GTK_IM_MODULE=fcitx
+export QT_IM_MODULE=fcitx
+export XMODIFIERS=@im=fcitx
+
+
+
+if [ ! -f "$WINEPREFIX/system.reg" ]; then
+
+    echo "Initializing Wine prefix..."
+
+    wineboot -u
+
+else
+
+    echo "Existing Wine prefix detected."
+
+fi
+
+
+
+if [ ! -f "$WINEPREFIX/.font_init_done" ]; then
+
+    bash /usr/local/bin/init-fonts.sh
+
+    touch "$WINEPREFIX/.font_init_done"
+
+else
+
+    echo "Fonts already initialized."
+
+fi
+
+
+
+echo "Configuring Wine XIM..."
+
+
+wine reg add \
+"HKCU\Software\Wine\X11 Driver" \
+/v UseXIM \
+/d Y \
+/f || true
+
+
+
+echo "Wine Ready."
+
+
+exec "$@"

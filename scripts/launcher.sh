@@ -1,0 +1,171 @@
+#!/bin/bash
+
+set -e
+
+export TERM=xterm
+
+export HOME=/home/wineuser
+export WINEPREFIX=/opt/wineprefix
+export WINEARCH=win64
+
+
+show_menu()
+{
+
+clear
+
+echo "====================================="
+echo " Wine Runtime CJKV Edition "
+echo "====================================="
+
+echo
+
+echo "1. Wine Shell"
+echo "2. Install Windows Application"
+echo "3. Run Application"
+echo "4. Backup Wine Prefix"
+echo "5. Exit"
+
+echo
+
+read -p "Select: " choice
+
+}
+
+
+
+wine_shell()
+{
+echo
+echo "Entering Wine Shell..."
+echo
+
+/bin/bash
+}
+
+
+
+install_app()
+{
+
+echo
+echo "Installers Directory:"
+echo "/opt/installers"
+
+echo
+
+ls -1 /opt/installers 2>/dev/null || true
+
+echo
+
+read -p "Installer filename: " installer
+
+
+if [ -f "/opt/installers/$installer" ]; then
+
+    wine "/opt/installers/$installer"
+
+else
+
+    echo "File not found."
+
+fi
+
+}
+
+
+
+run_app()
+{
+
+echo
+
+read -p "Executable path: " exe
+
+
+if [ -f "$exe" ]; then
+
+    wine "$exe"
+
+else
+
+    echo "File not found."
+
+fi
+
+}
+
+
+
+backup_prefix()
+{
+
+mkdir -p /opt/backups
+
+
+DATE=$(date +%Y%m%d-%H%M%S)
+
+
+echo
+echo "Creating backup..."
+
+
+tar czf \
+"/opt/backups/wineprefix-$DATE.tar.gz" \
+-C /opt wineprefix
+
+
+echo
+
+echo "Backup complete:"
+echo "/opt/backups/wineprefix-$DATE.tar.gz"
+
+}
+
+
+
+while true
+do
+
+show_menu
+
+
+case "$choice" in
+
+
+1)
+wine_shell
+;;
+
+
+2)
+install_app
+;;
+
+
+3)
+run_app
+;;
+
+
+4)
+backup_prefix
+;;
+
+
+5)
+echo "Bye."
+exit 0
+;;
+
+
+*)
+echo "Invalid choice."
+;;
+
+esac
+
+
+read -p "Press Enter to continue..."
+
+done
