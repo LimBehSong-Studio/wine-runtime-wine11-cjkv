@@ -30,7 +30,7 @@ The goal of this project is to provide a reusable and portable Wine runtime envi
 
 ---
 
-# Features
+## Features
 
 - WineHQ Stable 11 runtime
 - Linux container-based isolation
@@ -45,7 +45,83 @@ The goal of this project is to provide a reusable and portable Wine runtime envi
 
 ---
 
-# Font Policy
+# Quick Start
+
+## Recommended: Using Runtime Launcher
+
+The project provides a helper launcher script (`start.sh`) to simplify runtime deployment.
+
+Instead of manually configuring Docker parameters, users can start the Wine Runtime environment with:
+
+```bash
+chmod +x start.sh
+./start.sh
+```
+
+The launcher automatically prepares:
+
+- Docker container startup
+- X11 display forwarding
+- Persistent Wine prefix
+- External font directory
+- Windows installer directory
+- Shared data directory
+- Runtime log directory
+
+---
+
+## Runtime Workspace
+
+The launcher creates the following workspace:
+
+```text
+~/wine-runtime-data/
+```
+
+Directory structure:
+
+```text
+~/wine-runtime-data/
+
+├── fonts/
+│   └── External font files
+
+├── wineprefix/
+│   └── Persistent Wine environment
+
+├── installers/
+│   └── Windows application installers (.exe / .msi)
+
+├── backups/
+│   └── Runtime backup files
+
+├── shared/
+│   └── Shared files between Linux host and Wine container
+
+└── logs/
+    └── Runtime logs
+```
+
+---
+
+## Installing Windows Applications
+
+Windows installers can be placed into:
+
+```text
+~/wine-runtime-data/installers/
+```
+
+Supported installer formats:
+
+- `.exe`
+- `.msi`
+
+Installer files remain outside the container and can be reused after runtime updates.
+
+---
+
+## Font Policy
 
 Wine Runtime Wine11 CJKV Public Edition **does not include proprietary Microsoft fonts**.
 
@@ -61,7 +137,7 @@ Users are responsible for obtaining and using fonts according to their own licen
 
 ---
 
-# Built-in Fonts
+## Built-in Fonts
 
 The default image may include open-source fonts for basic CJK rendering.
 
@@ -77,7 +153,7 @@ For detailed license information, please refer to the corresponding font license
 
 ---
 
-# CJK Font Configuration
+## CJK Font Configuration
 
 Many Windows applications depend on installed fonts for correct text rendering.
 
@@ -91,11 +167,11 @@ This runtime provides a font loading framework but does not provide licensed pro
 
 ---
 
-# External Font Injection
+## External Font Injection
 
 Users can provide additional fonts through an external directory mounted into the container.
 
-## Host Directory
+### Host Directory
 
 Recommended directory:
 
@@ -107,12 +183,13 @@ Place additional font files inside this directory:
 
 ```text
 ~/wine-runtime-data/fonts/
+
 ├── example.ttf
 ├── example.otf
 └── custom-fonts/
 ```
 
-## Container Directory
+### Container Directory
 
 The directory is mounted into the runtime as:
 
@@ -137,7 +214,7 @@ Supported font sources may include:
 
 ---
 
-# Persistent Wine Prefix
+## Persistent Wine Prefix
 
 The Wine prefix is intentionally stored outside the Docker image.
 
@@ -169,7 +246,7 @@ Benefits:
 
 ---
 
-# Current Documentation Status
+## Current Documentation Status
 
 > This README is currently being improved.
 
