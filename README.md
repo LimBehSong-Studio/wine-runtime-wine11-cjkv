@@ -1,7 +1,8 @@
 # Wine Runtime Wine11 CJKV Public Edition
 
-Release: 2026-07xx
+Release: 2026-08 Preview
 
+Docker Pull：docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
 
 # Overview
 
