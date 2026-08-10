@@ -11,7 +11,7 @@ docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
 ```
 
 ---
-
+由于时间仓促，还没来得及完善详细手册、做软件安装韧性测试、蓝牙模块兼容性测试、远期的Wine底包一键升级、双击关连安装等有机会实现的功能，但目前exe的正常使用应该是不成问题的，欢迎各位用户测试反馈！
 ## Overview
 
 Wine Runtime Wine11 CJKV Public Edition is a containerized Wine 11 runtime environment designed for running Windows applications on Linux systems.
