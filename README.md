@@ -283,13 +283,13 @@ If this project is useful to you, you are welcome to support its continued devel
 <table>
 <tr>
 <td align="center">
-<img src="assets/alipay.jpg" width="220">
+<img src="assets/Alipay.jpg" width="220">
 
 **Alipay / 支付宝**
 </td>
 
 <td align="center">
-<img src="assets/wechat.png" width="220">
+<img src="assets/Wechatpay.png" width="220">
 
 **WeChat Pay / 微信支付**
 </td>
