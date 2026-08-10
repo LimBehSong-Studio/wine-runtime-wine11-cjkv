@@ -265,3 +265,41 @@ Future documentation improvements include:
 - Recovery and migration documentation
 
 The project is currently released as a preview version (`0.1.0-preview`).
+
+---
+
+## Support the Project
+
+Wine Runtime Wine11 CJKV Public Edition is maintained as an independent open-source project.
+
+If this project is useful to you, you are welcome to support its continued development, testing, documentation, and maintenance.
+
+### 支持项目
+
+如果这个项目对你有帮助，欢迎通过赞赏支持项目后续的开发、测试、文档完善与维护。
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center">
+<img src="assets/alipay.jpg" width="220">
+
+**Alipay / 支付宝**
+</td>
+
+<td align="center">
+<img src="assets/wechat.png" width="220">
+
+**WeChat Pay / 微信支付**
+</td>
+</tr>
+</table>
+
+**Thank you for supporting open-source development!**
+
+感谢你的支持 ❤️
+
+</div>
+
+> Donations are voluntary and do not provide any guaranteed support, service, or commercial license.
