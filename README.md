@@ -279,17 +279,19 @@ Windows GUI application 通过 X11 forwarding 显示到 Linux Desktop。
 
 # Fcitx5 Input Method
 
-Runtime 集成了 Fcitx5 相关支持，用于改善 Windows 应用中的中文输入体验。
+Runtime 已完成 Fcitx5 输入法集成与相关兼容性修复，目前主要针对 Fcitx5 中文输入环境进行开发和测试。
 
-项目目前重点面向：
+目前已验证：
 
 - Fcitx5
-- Chinese input method
+- Fcitx5 Chinese input environment
 - CJKV language environment
+
+> **注意：目前仅对 Fcitx5 进行了实际测试和兼容性修复。其他输入法目前尚未进行完整测试，因此暂不做兼容性保证。**
 
 不同 Windows 应用对输入法的支持方式可能存在差异。
 
-因此，部分特殊软件仍可能需要额外兼容性调整。
+因此，即使在 Fcitx5 环境下，部分特殊 Windows 软件仍可能需要额外的兼容性调整。
 
 ---
 
