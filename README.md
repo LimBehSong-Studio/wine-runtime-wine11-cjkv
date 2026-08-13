@@ -2,296 +2,524 @@
 
 # Wine Runtime Wine11 CJKV Public Edition
 
-**Release:** 2026-08 Preview
+**Docker 化 Wine 11 + CJKV Windows 应用运行时环境**
 
-Docker Image:
+**当前版本：** `0.1.0-preview.20260808`
+**发布阶段：** `2026-08 Preview / Public Preview`
 
-    docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
+Docker Image：
 
----
-
-由于时间仓促，还没来得及完善详细手册、做软件安装韧性测试、蓝牙模块兼容性测试、远期的 Wine 底包一键升级、双击关联安装等有机会实现的功能，但目前 `.exe` / `.msi` 应用的正常使用应该是不成问题的。
-
-目前项目已经完成公开发布，欢迎各位用户测试反馈！
-
----
-
-## Overview
-
-Wine Runtime Wine11 CJKV Public Edition 是一个面向 Linux 的容器化 Wine 11 Runtime 环境。
-
-项目提供一个可重复部署、可持久化、可迁移的 Windows 应用兼容运行环境。
-
-项目基于：
-
-- Ubuntu 22.04.5 LTS
-- WineHQ Stable 11
-- 32-bit / 64-bit Windows application support
-- X11 application forwarding
-- Fcitx5 input method integration
-- Chinese locale configuration
-- CJKV font rendering support
-- External font injection system
-- Persistent Wine prefix storage
-
-项目的核心目标是：
-
-> 把 Wine 从安装在宿主机上的软件，变成一个可复制、可迁移、可维护的 Runtime 环境。
+```bash
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
+```
 
 ---
 
-## Features
+## 项目简介
 
-- WineHQ Stable 11 Runtime
-- Linux Docker container isolation
-- 32-bit / 64-bit Windows application compatibility
-- X11 GUI application support
-- Persistent Wine prefix
-- Fcitx5 input method integration
-- Chinese locale support
-- CJKV font rendering framework
-- External font injection system
-- Persistent application data
-- Reproducible runtime configuration
-- Host-side runtime workspace
-- Runtime launcher script
-- Docker-based deployment
-- Runtime data separated from the Docker image
+**Wine Runtime Wine11 CJKV Public Edition** 是一个面向 Linux Desktop 的容器化 Wine 11 Windows 应用运行时环境。
+
+本项目并不是针对某一个 Windows 软件制作的专用容器，而是希望提供一个：
+
+* 可重复部署
+* 可持久化
+* 可迁移
+* 可扩展
+* 与宿主机环境相对隔离
+
+的通用 Windows 应用兼容运行环境。
+
+项目的核心思路是：
+
+> **把 Wine 从安装在 Linux 宿主机上的软件，变成一个可以独立部署、复制、迁移和维护的 Runtime 环境。**
+
+Wine Runtime 本身通过 Docker Image 提供，而用户自己的 Wine Prefix、字体、安装程序以及共享数据则与 Docker Image 分离保存。
+
+---
+
+## 当前发布状态
+
+本项目目前已经完成 GitHub 与 Docker Hub 的公开发布。
+
+当前版本：
+
+```text
+0.1.0-preview.20260808
+```
+
+属于：
+
+> **Preview / Public Preview（公开预览版）**
+
+目前 Runtime 已经可以用于实际 Windows 应用测试与使用，但项目仍处于早期公开阶段。
+
+由于项目目前仍在持续完善，以下内容尚未全部完成：
+
+* 更完整的软件安装兼容性测试
+* 软件安装韧性测试
+* 蓝牙模块兼容性测试
+* Wine 底层 Runtime 一键升级
+* Windows 应用双击关联安装
+* 更完善的桌面集成
+* 更完整的故障排查文档
+* 更多 Windows 应用的实际兼容性验证
+
+因此，本项目当前更适合作为：
+
+> **可以实际使用的公开 Preview Runtime，同时持续进行兼容性测试和功能完善。**
+
+---
+
+# Overview
+
+Wine Runtime Wine11 CJKV Public Edition 基于：
+
+* Ubuntu 22.04.5 LTS
+* WineHQ Stable 11
+* 32-bit / 64-bit Windows 应用运行环境
+* X11 GUI 应用支持
+* Fcitx5 输入法集成
+* 中文 Locale 配置
+* CJKV 字体环境
+* 外部字体注入机制
+* 持久化 Wine Prefix
+
+其中 **CJKV** 指：
+
+* 中文（Chinese）
+* 日文（Japanese）
+* 韩文（Korean）
+* 越南文（Vietnamese）
+
+项目重点解决的是 Linux + Wine 环境下 Windows 应用运行过程中常见的：
+
+* CJK 字体
+* 中文环境
+* 输入法
+* Wine Prefix 持久化
+* Docker Runtime 隔离
+* Runtime 与用户数据分离
+
+等问题。
+
+---
+
+# Features
+
+当前 Runtime 主要提供：
+
+* WineHQ Stable 11 Runtime
+* Docker 化运行
+* 32-bit / 64-bit Windows 应用支持
+* X11 GUI 应用支持
+* 持久化 Wine Prefix
+* Fcitx5 输入法集成
+* 中文 Locale 环境
+* CJKV 字体支持
+* 外部字体注入
+* 持久化应用数据
+* 可重复的 Runtime 配置
+* 宿主机 Runtime Workspace
+* Runtime Launcher
+* Docker Image 部署
+* Runtime 与用户数据分离
+
+项目并不以“兼容所有 Windows 软件”为目标，也不会对任何第三方 Windows 应用做无条件兼容保证。
 
 ---
 
 # Quick Start
 
-## Recommended: Using Runtime Launcher
+## 方式一：使用 Runtime Launcher
 
-项目提供了 `start.sh` Runtime Launcher，用于简化 Docker Runtime 的启动过程。
+项目提供：
+
+```text
+start.sh
+```
+
+用于简化 Runtime 的启动过程。
 
 进入项目目录：
 
-    cd ~/wine-runtime-wine11-cjkv
+```bash
+cd ~/wine-runtime-wine11-cjkv
+```
 
 赋予执行权限：
 
-    chmod +x start.sh
+```bash
+chmod +x start.sh
+```
 
 启动：
 
-    ./start.sh
+```bash
+./start.sh
+```
 
-Launcher 会自动准备 Runtime 所需的基础环境，包括：
+Runtime Launcher 负责处理 Runtime 启动过程中需要的相关 Docker、X11 以及数据目录配置。
 
-- Docker container startup
-- X11 display forwarding
-- Persistent Wine prefix
-- External font directory
-- Windows installer directory
-- Shared data directory
-- Runtime log directory
+当前 Runtime Workspace 包括：
+
+* Wine Prefix
+* 外部字体目录
+* Windows 安装程序目录
+* Shared 数据目录
+* Runtime 日志目录
+
+> **注意：当前 `start.sh` 主要针对项目当前版本及本地 Runtime 镜像环境设计。Docker Hub 公共镜像的直接运行方式请以当前版本实际文档和镜像配置为准。**
 
 ---
 
 # Runtime Workspace
 
-Launcher 默认使用：
+Runtime 默认使用：
 
-    ~/wine-runtime-data/
+```text
+~/wine-runtime-data/
+```
 
-目录结构：
+推荐目录结构：
 
-    ~/wine-runtime-data/
+```text
+~/wine-runtime-data/
 
-    ├── fonts/
-    │   └── External font files
-    │
-    ├── wineprefix/
-    │   └── Persistent Wine environment
-    │
-    ├── installers/
-    │   └── Windows application installers (.exe / .msi)
-    │
-    ├── backups/
-    │   └── Runtime backup files
-    │
-    ├── shared/
-    │   └── Shared files between Linux host and Wine container
-    │
-    └── logs/
-        └── Runtime logs
+├── fonts/
+│   └── 外部字体
+│
+├── wineprefix/
+│   └── 持久化 Wine Prefix
+│
+├── installers/
+│   └── Windows 应用安装程序
+│
+├── backups/
+│   └── 备份数据
+│
+├── shared/
+│   └── 宿主机与 Runtime 共享文件
+│
+└── logs/
+    └── Runtime 日志
+```
 
 Runtime 数据与 Docker Image 分离。
 
-因此，即使后续升级 Wine Runtime Image，用户自己的 Wine Prefix、字体、安装包以及其他 Runtime 数据也可以继续保留。
+因此，在正常的 Volume 持久化配置下：
+
+> **重新创建 Container 并不等于删除用户自己的 Wine Prefix。**
+
+这也是本项目 Runtime 设计的重要组成部分。
 
 ---
 
-# Installing Windows Applications
+# Windows 应用安装
 
-Windows 应用安装包可以放入：
+Windows 应用安装程序推荐放置在：
 
-    ~/wine-runtime-data/installers/
+```text
+~/wine-runtime-data/installers/
+```
 
-支持的常见安装格式：
+常见安装格式包括：
 
-- `.exe`
-- `.msi`
+```text
+.exe
+.msi
+```
 
 例如：
 
-    ~/wine-runtime-data/installers/
+```text
+~/wine-runtime-data/installers/
 
-    ├── setup.exe
-    ├── application.exe
-    └── application.msi
+├── setup.exe
+├── application.exe
+└── application.msi
+```
 
-安装包保存在宿主机中，不依赖 Docker Image。
+安装程序本身保存在 Linux 宿主机中，而不是 Docker Image 内。
 
-这样在 Runtime 更新、重新创建 Container 或迁移环境时，安装包仍然可以继续使用。
+因此，在 Runtime 重新创建、升级或迁移时，原有安装程序仍然可以继续使用。
 
 ---
 
-# Persistent Wine Prefix
+# Wine Prefix 持久化
 
 Wine Prefix 默认存储在宿主机：
 
-    ~/wine-runtime-data/wineprefix/
+```text
+~/wine-runtime-data/wineprefix/
+```
 
 Container 内对应：
 
-    /opt/wineprefix
+```text
+/opt/wineprefix
+```
 
 典型 Volume Mapping：
 
-    -v ~/wine-runtime-data/wineprefix:/opt/wineprefix
+```bash
+-v ~/wine-runtime-data/wineprefix:/opt/wineprefix
+```
 
-Wine Prefix 与 Docker Image 分离，可以保留：
+Wine Prefix 保存 Windows 应用运行过程中产生的大量持久化状态，例如：
 
-- Windows application settings
-- Wine configuration
-- Installed application data
-- Registry configuration
-- Application compatibility settings
+* Windows 应用设置
+* Wine 配置
+* Windows Registry
+* 已安装应用数据
+* 应用兼容性配置
+* Wine 环境状态
 
-这样可以实现：
+因此，Runtime Image 与 Wine Prefix 可以相互独立。
 
-- Runtime Image 升级而不直接删除用户数据
-- Wine Prefix 持久化
-- Runtime 迁移
-- Prefix 备份
-- 不同 Runtime 版本进行测试
+这使得后续可以进一步实现：
+
+* Runtime Image 升级
+* Wine Prefix 持久化
+* Runtime 迁移
+* Prefix 备份
+* 不同 Runtime 版本测试
+
+而不需要每次重新建立整个 Windows 应用环境。
+
+> **建议在进行重大 Runtime 升级、实验性修改或兼容性测试前，对 Wine Prefix 进行备份。**
 
 ---
 
-# Font Policy
+# 字体支持
 
-Wine Runtime Wine11 CJKV Public Edition **不包含微软专有字体**。
+## Font Policy
+
+Wine Runtime Wine11 CJKV Public Edition **不主动分发微软专有 Windows 系统字体。**
 
 例如：
 
-- Microsoft YaHei
-- SimSun
-- Microsoft JhengHei
-- Malgun Gothic
-- 其他 Windows 专有字体
+* Microsoft YaHei / 微软雅黑
+* SimSun / 宋体
+* SimHei / 黑体
+* Microsoft JhengHei
+* Malgun Gothic
+* MS Gothic
+* 其他具有相应商业授权限制的 Windows 字体
 
-用户应根据相关字体的授权条款自行获取和使用字体。
+本项目不会为了提高兼容性而直接在 Docker Image 中打包未经授权的商业 Windows 字体。
 
-本项目不会在 Docker Image 中主动分发未经授权的微软专有字体。
+如果某个 Windows 应用依赖特定商业字体，用户可以根据自身拥有的授权情况自行提供字体文件。
 
----
+> **字体文件的版权、授权及合法使用责任由用户自行承担。**
 
-# Built-in Fonts
-
-Runtime 可以提供用于基础 CJK 字符显示的开源字体。
-
-这些字体分别遵循其对应的开源许可证。
-
-可能使用的字体包括：
-
-- Noto CJK
-- WenQuanYi
-- 其他开源 CJK 字体
-
-具体字体及其许可证信息，请以项目实际文件和对应字体项目的 License 为准。
+请勿通过本项目获取、传播或重新分发没有相应授权的商业字体。
 
 ---
 
-# CJKV Font Configuration
+# 内置 CJK 字体
 
-很多 Windows 应用依赖系统字体进行正确的文字渲染。
+Runtime 提供用于基础 CJK 字符显示的开源字体资源。
 
-如果系统没有合适的 CJK 字体，可能出现：
+当前项目使用的字体资源包括：
 
-- 中文显示为缺字方框
-- 字体 Fallback
-- 中日韩文字显示异常
-- 软件界面与 Windows 原生环境存在差异
+* Noto CJK
+* Jigmo
+* HanaMin
+* 其他项目实际包含的开源字体资源
 
-本项目提供 CJKV 字体加载和配置框架，但不提供未经授权的微软专有字体。
+这些字体分别遵循各自的开源许可证。
+
+具体字体文件及其授权信息，请以项目实际 `fonts/` 文件和对应字体项目的 License 为准。
+
+本项目不会因为使用开源 CJK 字体，就对所有 Windows 应用的字体兼容性作出保证。
 
 ---
 
-# External Font Injection
+# CJKV 字体兼容
+
+很多 Windows 应用会依赖特定系统字体进行文字渲染。
+
+如果 Runtime 中缺少应用所需要的字体，可能出现：
+
+```text
+□□□□
+```
+
+或者：
+
+* 中文显示为缺字方框
+* 日文显示异常
+* 韩文显示异常
+* 字体 Fallback 不符合预期
+* 应用界面字体与 Windows 原生环境存在差异
+* 特定字符无法正确显示
+
+本项目已经提供 CJKV 字体加载、Wine 字体注册以及字体替换机制。
+
+但是：
+
+> **CJKV Runtime 并不意味着所有 Windows 软件都可以在任何情况下正确显示所有 CJK 字符。**
+
+不同 Windows 应用可能使用不同的字体 API、字体名称、Fallback 机制或私有字体。
+
+因此，字体兼容性仍然属于应用级问题。
+
+---
+
+# 外部字体注入
 
 用户可以通过宿主机目录向 Runtime 注入额外字体。
 
 推荐目录：
 
-    ~/wine-runtime-data/fonts/
-
-例如：
-
-    ~/wine-runtime-data/fonts/
-
-    ├── example.ttf
-    ├── example.otf
-    └── custom-fonts/
+```text
+~/wine-runtime-data/fonts/
+```
 
 Container 内对应：
 
-    /opt/extra_fonts/
+```text
+/opt/extra_fonts/
+```
 
 典型 Volume Mapping：
 
-    -v ~/wine-runtime-data/fonts:/opt/extra_fonts
+```bash
+-v ~/wine-runtime-data/fonts:/opt/extra_fonts
+```
 
-Runtime 初始化过程会检测并处理可用字体。
+Runtime 支持处理常见字体格式：
 
-可以根据个人需求加入合法获取的字体，例如：
+```text
+.ttf
+.ttc
+.otf
+```
 
-- Noto CJK
-- HanaMin
-- Jigmo
-- 用户自行获取并授权使用的字体
+例如：
+
+```text
+~/wine-runtime-data/fonts/
+
+├── example.ttf
+├── example.otf
+├── example.ttc
+└── custom-fonts/
+```
+
+用户可以根据自己的实际需求加入合法获取并拥有使用权的字体。
+
+例如：
+
+* Noto CJK
+* HanaMin
+* Jigmo
+* 用户自行获得授权的商业字体
+
+---
+
+# 遇到 `□□□□` 怎么办？
+
+如果 Windows 应用出现：
+
+```text
+□□□□
+```
+
+或者部分 CJK 字符无法正常显示，可以按照以下顺序排查：
+
+### 1. 确认 Runtime 本身能够识别 CJK 字体
+
+首先确认问题不是整个 Runtime 的 CJK 字体环境失效。
+
+### 2. 确认应用是否依赖特定字体
+
+部分 Windows 应用并不是简单寻找“任意中文字体”，而是直接请求某个特定字体名称。
+
+例如某些应用可能明确依赖：
+
+```text
+SimSun
+SimHei
+Microsoft YaHei
+MS Gothic
+```
+
+等字体。
+
+### 3. 使用合法获得的字体进行外挂
+
+将拥有合法使用权的字体放入：
+
+```text
+~/wine-runtime-data/fonts/
+```
+
+然后重新启动 Runtime，使字体初始化过程重新处理字体。
+
+### 4. 重新测试应用
+
+不同 Windows 软件的字体机制差异很大。
+
+因此：
+
+> **Runtime 提供字体基础设施，但最终显示效果仍取决于具体 Windows 应用。**
 
 ---
 
 # X11 GUI
 
-本项目主要面向 Linux Desktop + X11 环境。
+本项目目前主要面向：
 
-Windows GUI application 通过 X11 forwarding 显示到 Linux Desktop。
+```text
+Linux Desktop + X11
+```
 
-因此，在使用 Runtime 前，需要确保 Linux 宿主机已经正常运行 X11 图形环境。
+Windows GUI 应用通过 Docker Container 的 X11 forwarding 显示到 Linux Desktop。
 
-目前项目主要针对实际 Linux Desktop 环境进行开发和测试。
+因此使用 Runtime 前，需要确保：
+
+* Linux Desktop 正常运行
+* X11 环境正常
+* Docker Container 可以访问宿主机 X11 Display
+
+本项目当前主要针对实际 Linux Desktop + X11 环境进行开发和测试。
+
+Wayland-only、特殊远程桌面环境以及其他非标准图形环境可能需要额外配置。
 
 ---
 
-# Fcitx5 Input Method
+# Fcitx5 输入法
 
-Runtime 已完成 Fcitx5 输入法集成与相关兼容性修复，目前主要针对 Fcitx5 中文输入环境进行开发和测试。
+Runtime 已完成 Fcitx5 输入法集成以及相关兼容性配置。
 
-目前已验证：
+目前主要针对：
 
-- Fcitx5
-- Fcitx5 Chinese input environment
-- CJKV language environment
+* Fcitx5
+* Fcitx5 中文输入环境
+* CJKV 语言环境
 
-> **注意：目前仅对 Fcitx5 进行了实际测试和兼容性修复。其他输入法目前尚未进行完整测试，因此暂不做兼容性保证。**
+进行开发和测试。
 
-不同 Windows 应用对输入法的支持方式可能存在差异。
+当前重点验证的是：
 
-因此，即使在 Fcitx5 环境下，部分特殊 Windows 软件仍可能需要额外的兼容性调整。
+```text
+Fcitx5
+    ↓
+Linux Desktop
+    ↓
+Wine Runtime
+    ↓
+Windows Application
+```
+
+输入法相关环境。
+
+> **注意：目前项目主要针对 Fcitx5 进行实际测试和兼容性修复。其他 Linux 输入法暂未进行完整测试，因此暂不做兼容性保证。**
+
+同时，不同 Windows 应用对输入法的实现方式存在差异。
+
+因此，即使宿主机使用 Fcitx5，部分特殊 Windows 软件仍然可能需要进一步的兼容性调整。
 
 ---
 
@@ -299,276 +527,366 @@ Runtime 已完成 Fcitx5 输入法集成与相关兼容性修复，目前主要�
 
 当前项目根目录主要包含：
 
-    wine-runtime-wine11-cjkv/
+```text
+wine-runtime-wine11-cjkv/
 
-    ├── Dockerfile
-    ├── README.md
-    ├── RESTORE.md
-    ├── start.sh
-    │
-    ├── scripts/
-    │   └── Runtime initialization scripts
-    │
-    ├── fonts/
-    │   └── Built-in font resources
-    │
-    ├── extra_fonts/
-    │   └── Additional font resources
-    │
-    ├── gecko/
-    │   └── Wine Gecko resources
-    │
-    ├── mono/
-    │   └── Wine Mono resources
-    │
-    ├── assets/
-    │   └── Project assets
-    │
-    └── archive/
-        └── dockerfiles/
-            └── Historical Dockerfiles
+├── Dockerfile
+├── README.md
+├── RESTORE.md
+├── start.sh
+│
+├── scripts/
+│   ├── entrypoint.sh
+│   ├── init-fonts.sh
+│   ├── init-host.sh
+│   └── launcher.sh
+│
+├── fonts/
+│   └── 内置字体资源
+│
+├── extra_fonts/
+│   └── 额外字体资源
+│
+├── gecko/
+│   └── Wine Gecko 资源
+│
+├── mono/
+│   └── Wine Mono 资源
+│
+├── assets/
+│   └── 项目资源
+│
+└── archive/
+    └── dockerfiles/
+        └── 历史 Dockerfile
+```
 
-历史开发阶段使用过的 Dockerfile 已经移动到：
+历史开发阶段使用过的 Dockerfile 已移动至：
 
-    archive/dockerfiles/
+```text
+archive/dockerfiles/
+```
 
-这些文件主要用于保留项目开发过程中的历史版本和技术演进记录。
+这些文件主要用于保留项目开发过程中的历史版本、实验记录以及技术演进过程。
 
-当前正式 Runtime 使用：
+当前正式 Runtime 构建使用：
 
-    Dockerfile
+```text
+Dockerfile
+```
 
 ---
 
-# Recovery
+# Runtime 恢复
 
 项目提供：
 
-    RESTORE.md
+```text
+RESTORE.md
+```
 
 以及：
 
-    一键恢复流程.txt
+```text
+一键恢复流程.txt
+```
 
 用于记录 Runtime 的恢复、重新部署以及相关操作流程。
 
-由于 Docker Image、项目源码以及 Runtime 数据采用分离设计，即使本地环境出现问题，也可以通过重新获取项目源码和 Docker Image 的方式恢复 Runtime。
+由于项目采用：
+
+> **Docker Image + GitHub 源码 + Host Runtime Data 分离**
+
+的设计，即使本地 Container 出现问题，也可以重新获取项目源码与 Docker Image，再结合持久化 Runtime 数据重新建立运行环境。
 
 ---
 
-# Current Release
+# 当前版本
 
 当前公开版本：
 
-    0.1.0-preview.20260808
+```text
+0.1.0-preview.20260808
+```
 
 Docker Image：
 
-    docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
+```bash
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
+```
 
-当前版本属于：
+当前版本定位：
 
-> Preview / Public Preview
+> **Preview / Public Preview**
 
-主要用于公开测试、实际应用验证以及收集用户反馈。
+主要用于：
+
+* 公开测试
+* 实际 Windows 应用验证
+* CJKV 环境测试
+* 字体兼容性测试
+* 收集用户反馈
+* 为后续稳定版本积累兼容性数据
 
 ---
 
-# Current Status
+# 当前完成情况
+
+## 已完成
 
 目前已经完成：
 
-- Wine 11 Runtime 基础环境
-- Docker 化运行
-- 32-bit / 64-bit 支持
-- X11 GUI Runtime
-- CJKV 字体环境
-- Fcitx5 输入法支持
-- 外部字体注入
-- Persistent Wine Prefix
-- Runtime Launcher
-- Runtime Workspace
-- Docker Hub 发布
-- GitHub 开源项目发布
+* Wine 11 Runtime 基础环境
+* Docker 化运行
+* 32-bit / 64-bit Windows 应用环境
+* X11 GUI Runtime
+* CJKV 字体环境
+* CJK 字体注册与替换机制
+* Fcitx5 输入法集成
+* 外部字体注入
+* Persistent Wine Prefix
+* Runtime Launcher
+* Runtime Workspace
+* GitHub 开源项目发布
+* Docker Hub 镜像公开发布
+
+---
+
+## 持续完善
 
 目前仍在持续完善：
 
-- 更完整的软件安装兼容性测试
-- 软件安装韧性测试
-- 蓝牙模块兼容性
-- 更多 Windows 应用兼容性测试
-- Wine 底层 Runtime 一键升级
-- Windows 应用双击关联安装
-- 更完善的 Fcitx5 / Rime 配置
-- 更完整的故障排查文档
-- 更完整的迁移与恢复文档
-- 更多自动化部署功能
+* 更多 Windows 应用兼容性测试
+* 软件安装韧性测试
+* 蓝牙模块兼容性
+* Wine 底层 Runtime 一键升级
+* Windows 应用双击关联安装
+* 更完善的 Fcitx5 / Rime 配置
+* 更完整的故障排查文档
+* 更完整的迁移与恢复文档
+* 更多自动化部署功能
+* 更多 CJKV 应用兼容性测试
 
 ---
 
 # Roadmap
 
-后续版本将根据实际测试结果继续完善。
+后续版本将根据实际测试结果以及社区反馈继续完善。
 
 ## Runtime
 
-- Wine Runtime 更新机制
-- 更完善的 Runtime upgrade workflow
-- Runtime rollback
-- Runtime backup / restore
-- 更完善的 Docker deployment automation
+* Wine Runtime 更新机制
+* 更完善的 Runtime 升级流程
+* Runtime Rollback
+* Runtime Backup / Restore
+* 更完善的 Docker 部署自动化
 
-## Compatibility
+## Windows 应用兼容性
 
-- 更多 Windows application compatibility testing
-- Bluetooth compatibility
-- USB device compatibility
-- Hardware-related compatibility
-- Windows application installation resilience
+* 更多 Windows 应用兼容性测试
+* 软件安装韧性测试
+* Bluetooth 兼容性
+* USB 设备兼容性
+* 硬件相关应用兼容性
+* Windows 应用安装流程优化
 
 ## Desktop Integration
 
-- Windows application desktop integration
-- `.exe` file association
-- Double-click installation
-- Application launcher integration
+* Windows 应用桌面集成
+* `.exe` 文件关联
+* 双击安装
+* Windows 应用 Launcher 集成
 
-## Input & CJKV
+## 输入法与 CJKV
 
-- Fcitx5 / Rime optimization
-- More CJKV font compatibility
-- Better Japanese / Korean input support
-- Better application-specific input compatibility
+* Fcitx5 / Rime 进一步优化
+* 更多 CJKV 字体兼容性测试
+* 更完善的日文输入支持
+* 更完善的韩文输入支持
+* 更完善的应用级输入法兼容性
 
-## Documentation
+## 文档
 
-- Complete installation guide
-- Troubleshooting guide
-- Architecture documentation
-- Advanced configuration guide
-- Migration guide
-- Recovery guide
+* 完整安装手册
+* 故障排查指南
+* Runtime 架构文档
+* 高级配置指南
+* Runtime 迁移指南
+* Runtime 恢复指南
 
 ---
 
-# Project Philosophy
+# 项目设计理念
 
-Wine Runtime Wine11 CJKV Public Edition 希望探索一种不同于传统 Wine 安装方式的思路。
+传统 Wine 安装方式通常类似：
 
-传统方式：
+```text
+Linux Host
+    │
+    └── Wine
+         ├── Windows Applications
+         ├── Wine Prefix
+         └── System Configuration
+```
 
-    Linux Host
-        │
-        └── Wine
-             ├── Windows Applications
-             ├── Wine Prefix
-             └── System Configuration
+Wine Runtime Wine11 CJKV Public Edition 希望探索另一种方式：
 
-本项目：
+```text
+Linux Host
+    │
+    ├── Docker
+    │
+    └── Wine Runtime Container
+          │
+          ├── Wine 11
+          ├── CJKV Environment
+          ├── Fcitx5
+          └── Windows Applications
 
-    Linux Host
-        │
-        ├── Docker
-        │
-        └── Wine Runtime Container
-              │
-              ├── Wine 11
-              ├── CJKV Environment
-              ├── Fcitx5
-              └── Windows Applications
+Host Persistent Data
+          │
+          └── ~/wine-runtime-data/
+                ├── wineprefix
+                ├── fonts
+                ├── installers
+                ├── shared
+                ├── backups
+                └── logs
+```
 
-    Host Persistent Data
-              │
-              └── ~/wine-runtime-data/
-                    ├── wineprefix
-                    ├── fonts
-                    ├── installers
-                    ├── shared
-                    ├── backups
-                    └── logs
-
-核心思路是：
+核心思路只有一句话：
 
 > **Runtime 与用户数据分离。**
 
 这样可以让 Wine 环境更加容易：
 
-- 部署
-- 复制
-- 迁移
-- 备份
-- 恢复
-- 升级
-- 测试
+* 部署
+* 复制
+* 迁移
+* 备份
+* 恢复
+* 升级
+* 测试
+
+最终希望形成的是一个真正意义上的：
+
+> **Windows Application Runtime for Linux**
+
+而不是一个只针对某一个软件的临时 Wine 容器。
 
 ---
 
 # Repository
 
-GitHub:
+GitHub：
 
 https://github.com/LimBehSong-Studio/wine-runtime-wine11-cjkv
 
-Docker Hub:
+Docker Hub：
 
 https://hub.docker.com/r/conradtech/wine-runtime-wine11-cjkv
 
 欢迎提交：
 
-- Issues
-- Bug reports
-- Compatibility reports
-- Feature requests
-- Pull Requests
+* Issue
+* Bug Report
+* Compatibility Report
+* Feature Request
+* Pull Request
+* Documentation Improvement
 
-如果你成功使用本 Runtime 运行某个 Windows 软件，也欢迎反馈软件名称、Wine 配置以及运行情况。
+如果你成功使用本 Runtime 运行某个 Windows 软件，也非常欢迎反馈：
 
-这些实际测试结果将帮助项目继续完善。
+```text
+软件名称：
+软件版本：
+Runtime 版本：
+Linux 发行版：
+安装方式：
+运行结果：
+CJK / 字体表现：
+输入法：
+额外配置：
+错误信息 / 日志：
+```
+
+实际的 Windows 应用兼容性反馈，对于后续 Runtime 的完善非常有价值。
 
 ---
 
-## Current Documentation Status
+# 免责声明
 
-> This README is currently being improved.
+Wine Runtime Wine11 CJKV Public Edition 是一个基于 Wine 的开源 Windows 应用兼容运行环境。
 
-The runtime is functional, but documentation is still being expanded.
+本项目：
 
-The current release is intended for public preview and real-world compatibility testing.
+* 不包含 Windows 操作系统
+* 不提供 Windows 操作系统许可证
+* 不提供第三方 Windows 软件许可证
+* 不主动分发未经授权的微软专有字体
+* 不保证任何第三方 Windows 软件兼容
+* 不保证与原生 Windows 环境具有完全相同的行为或显示效果
+* 不保证 Windows 驱动、蓝牙设备、USB 设备以及其他硬件相关软件兼容
+
+用户自行负责获取并合法使用 Windows 软件、字体、运行库以及其他第三方组件。
+
+第三方软件、字体及其他资源均受其各自适用的许可证约束。
 
 ---
 
-## Support the Project
+# 支持项目
 
-Wine Runtime Wine11 CJKV Public Edition is maintained as an independent open-source project.
+**Wine Runtime Wine11 CJKV Public Edition** 是林北松工作室 / Conradtech 的独立开源项目。
 
-If this project is useful to you, you are welcome to support its continued development, testing, documentation, and maintenance.
+如果这个项目帮助你节省了时间、解决了 Linux 下运行 Windows 应用的问题，欢迎通过赞赏支持项目后续的：
 
-### 支持项目
+* Runtime 开发
+* 兼容性测试
+* 文档完善
+* Bug 排查
+* 社区维护
+* 后续版本开发
 
-如果这个项目对你有帮助，欢迎通过赞赏支持项目后续的开发、测试、文档完善与维护。
+## 支持方式
 
-<div align="center">
+### 支付宝
 
-<table>
-<tr>
-<td align="center">
-<img src="assets/Alipay.jpg" width="220">
+将二维码放置于：
 
-**Alipay / 支付宝**
-</td>
+```text
+assets/
+```
 
-<td align="center">
-<img src="assets/Wechatpay.png" width="220">
+### 微信支付
 
-**WeChat Pay / 微信支付**
-</td>
-</tr>
-</table>
+将二维码放置于：
 
-**Thank you for supporting open-source development!**
+```text
+assets/
+```
 
-感谢你的支持 ❤️
+感谢每一位使用、测试、反馈以及支持这个项目的人 ❤️
 
-</div>
+> 赞赏属于自愿支持，不代表任何商业服务、技术支持承诺或软件授权。
 
-> Donations are voluntary and do not provide any guaranteed support, service, or commercial license.
+---
+
+# 最后
+
+这是 **林北松工作室 · Conradtech 的第一个公开作品**。
+
+Wine Runtime Wine11 CJKV 目前还不是一个“完成品”。
+
+它更像是一个已经走出实验室、开始接受真实用户测试的 **Public Preview Runtime**。
+
+如果你遇到问题，欢迎提交 Issue。
+
+如果你发现某个 Windows 软件可以正常运行，也欢迎告诉我们。
+
+如果你发现某个软件存在字体、输入法、安装或者兼容性问题，同样欢迎反馈。
+
+这些真实环境中的测试结果，会成为后续版本继续完善的重要依据。
+
+**Wine Runtime Wine11 CJKV Public Edition**
+
+> **让 Wine 成为 Runtime，而不仅仅是一套安装在宿主机上的软件。**
