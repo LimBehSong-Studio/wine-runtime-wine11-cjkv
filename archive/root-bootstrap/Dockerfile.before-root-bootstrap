@@ -13,7 +13,6 @@ RUN dpkg --add-architecture i386
 #######################################
 RUN apt update && apt install -y \
     software-properties-common \
-    gosu \
     wget \
     curl \
     ca-certificates \
@@ -42,12 +41,10 @@ RUN apt update && apt install -y \
     libgl1:i386 \
     && rm -rf /var/lib/apt/lists/*
 
-
 #######################################
 # Locale
 #######################################
 RUN locale-gen zh_CN.UTF-8
-
 
 #######################################
 # WineHQ repository
@@ -56,10 +53,8 @@ RUN mkdir -pm755 /etc/apt/keyrings && \
     wget -O /etc/apt/keyrings/winehq-archive.key \
     https://dl.winehq.org/wine-builds/winehq.key
 
-
 RUN wget -NP /etc/apt/sources.list.d/ \
     https://dl.winehq.org/wine-builds/ubuntu/dists/jammy/winehq-jammy.sources
-
 
 #######################################
 # Wine Stable
@@ -68,53 +63,47 @@ RUN apt update && \
     apt install -y winehq-stable && \
     rm -rf /var/lib/apt/lists/*
 
-
 #######################################
-# Runtime User
+# Public container user
 #######################################
 RUN useradd -m -u 1000 wineuser && \
     mkdir -p /opt/wineprefix && \
     chown -R wineuser:wineuser /opt/wineprefix
 
-
 #######################################
-# Scripts
+# Runtime scripts
 #######################################
 COPY scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY scripts/init-fonts.sh /usr/local/bin/init-fonts.sh
 COPY scripts/launcher.sh /usr/local/bin/launcher.sh
-
 
 RUN chmod +x \
     /usr/local/bin/entrypoint.sh \
     /usr/local/bin/init-fonts.sh \
     /usr/local/bin/launcher.sh
 
-
 #######################################
-# Fonts
+# Built-in Fonts
 #######################################
 COPY fonts/ /usr/share/fonts/custom/
 
 RUN chmod -R 755 /usr/share/fonts/custom && \
     fc-cache -fv
 
-
 #######################################
-# Gecko
+# Built-in Wine Gecko
 #######################################
 COPY gecko/ /usr/share/wine/gecko/
 
-
 #######################################
-# Mono
+# Built-in Wine Mono
 #######################################
 COPY mono/ /usr/share/wine/mono/
 
-
 #######################################
-# Runtime
+# Runtime environment
 #######################################
+USER wineuser
 
 ENV HOME=/home/wineuser
 ENV WINEPREFIX=/opt/wineprefix
@@ -124,13 +113,6 @@ ENV LANG=zh_CN.UTF-8
 ENV LANGUAGE=zh_CN:zh
 ENV LC_ALL=zh_CN.UTF-8
 
-
 WORKDIR /home/wineuser
-
-
-# 注意：
-# 不要 USER wineuser
-# entrypoint 需要 root 做初始化
-
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

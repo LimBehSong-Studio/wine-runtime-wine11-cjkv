@@ -2,12 +2,6 @@
 
 set -e
 
-if [ "$(id -u)" != "0" ]; then
-    echo "ERROR: entrypoint must start as root"
-    exit 1
-fi
-
-
 echo "=== Wine Runtime Starting ==="
 
 
@@ -16,44 +10,61 @@ echo "=== Wine Runtime Starting ==="
 #######################################
 
 export HOME=/home/wineuser
+
 export WINEPREFIX=/opt/wineprefix
+
 export WINEARCH=win64
+
 export PATH=/usr/bin:/bin:$PATH
+
 export TERM=xterm
 
 
+#######################################
+# XDG / DBus Runtime Environment
+#######################################
 
-#######################################
-# XDG / DBus
-#######################################
+# IMPORTANT:
+# Do not overwrite XDG_RUNTIME_DIR when it is provided
+# by the host session.
+#
+# Fcitx5 uses the host user's DBus session bus.
+# Overwriting XDG_RUNTIME_DIR with a container-local
+# directory breaks the DBus connection and therefore
+# breaks Wine + Fcitx5 input method integration.
 
 if [ -z "${XDG_RUNTIME_DIR:-}" ]; then
 
-    export XDG_RUNTIME_DIR=/tmp/runtime-1000
+    export XDG_RUNTIME_DIR="/tmp/runtime-$(id -u)"
 
     mkdir -p "$XDG_RUNTIME_DIR"
+
     chmod 700 "$XDG_RUNTIME_DIR"
-    chown wineuser:wineuser "$XDG_RUNTIME_DIR"
 
-    echo "Using fallback XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
+    echo "XDG_RUNTIME_DIR was not provided by host."
+    echo "Using fallback: $XDG_RUNTIME_DIR"
 
 else
 
-    echo "Using host XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
+    echo "Using host XDG_RUNTIME_DIR: $XDG_RUNTIME_DIR"
 
 fi
 
 
+# Preserve the host DBus session bus when provided.
 if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
-    echo "Using DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS"
-else
-    echo "DBUS_SESSION_BUS_ADDRESS not set"
-fi
 
+    echo "Using DBUS_SESSION_BUS_ADDRESS: $DBUS_SESSION_BUS_ADDRESS"
+
+else
+
+    echo "DBUS_SESSION_BUS_ADDRESS is not set."
+
+fi
 
 
 #######################################
-# Input Method
+# Input Method Environment
 #######################################
 
 export GTK_IM_MODULE=fcitx
@@ -61,44 +72,15 @@ export QT_IM_MODULE=fcitx
 export XMODIFIERS=@im=fcitx
 
 
-
 #######################################
-# Prefix Permission
-#######################################
-
-mkdir -p "$WINEPREFIX"
-
-OWNER=$(stat -c %U "$WINEPREFIX" 2>/dev/null || echo root)
-
-if [ "$OWNER" != "wineuser" ]; then
-
-    echo "Fixing prefix ownership..."
-
-    chown -R wineuser:wineuser "$WINEPREFIX"
-
-else
-
-    echo "Prefix ownership OK."
-
-fi
-
-
-
-#######################################
-# Prefix Initialization
+# Wine Prefix Initialization
 #######################################
 
 if [ ! -f "$WINEPREFIX/system.reg" ]; then
 
     echo "Initializing Wine prefix..."
 
-    gosu wineuser env \
-        HOME=/home/wineuser \
-        WINEPREFIX=$WINEPREFIX \
-        WINEARCH="$WINEARCH" \
-        wineboot -u
-
-    gosu wineuser wineserver -w
+    wineboot -u
 
 else
 
@@ -107,18 +89,15 @@ else
 fi
 
 
-
 #######################################
 # Font Initialization
 #######################################
 
 if [ ! -f "$WINEPREFIX/.font_init_done" ]; then
 
-    echo "Initializing fonts..."
+    bash /usr/local/bin/init-fonts.sh
 
-    gosu wineuser bash /usr/local/bin/init-fonts.sh
-
-    gosu wineuser touch "$WINEPREFIX/.font_init_done"
+    touch "$WINEPREFIX/.font_init_done"
 
 else
 
@@ -127,34 +106,33 @@ else
 fi
 
 
-
 #######################################
-# Wine XIM
+# Wine XIM Configuration
 #######################################
 
 echo "Configuring Wine XIM..."
 
-gosu wineuser env \
-    HOME=/home/wineuser \
-    WINEPREFIX=$WINEPREFIX \
-    wine reg add \
+wine reg add \
     "HKCU\Software\Wine\X11 Driver" \
     /v UseXIM \
     /d Y \
     /f || true
 
 
-
 #######################################
-# Status
+# Runtime Status
 #######################################
 
 echo "Wine Ready."
 
 echo "HOME=$HOME"
 echo "WINEPREFIX=$WINEPREFIX"
-echo "WINEARCH="$WINEARCH""
+echo "WINEARCH=$WINEARCH"
+echo "XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR"
 
+if [ -n "${DBUS_SESSION_BUS_ADDRESS:-}" ]; then
+    echo "DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS"
+fi
 
 
 #######################################
@@ -163,9 +141,9 @@ echo "WINEARCH="$WINEARCH""
 
 if [ $# -eq 0 ]; then
 
-    exec gosu wineuser /usr/local/bin/launcher.sh
+    exec /usr/local/bin/launcher.sh
 
 fi
 
 
-exec gosu wineuser "$@"
+exec "$@"
