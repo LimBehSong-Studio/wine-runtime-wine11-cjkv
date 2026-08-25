@@ -1,23 +1,23 @@
 # 林北松工作室 · Conradtech 首个作品
 
-# Wine Runtime Wine11 CJKV Public Edition
+# Wine Runtime Wine11 CJKV
 
 **Docker 化 Wine 11 + CJKV Windows 应用运行时环境**
 
-**当前版本：** `0.1.0-preview.20260808`
-**发布阶段：** `2026-08 Preview / Public Preview`
+**当前版本：** `0.1.0-rc1.20260825`
+**发布阶段：** `Release Candidate / RC1`
 
 Docker Image：
 
 ```bash
-docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
 ```
 
 ---
 
 ## 项目简介
 
-**Wine Runtime Wine11 CJKV Public Edition** 是一个面向 Linux Desktop 的容器化 Wine 11 Windows 应用运行时环境。
+**Wine Runtime Wine11 CJKV** 是一个面向 Linux Desktop 的容器化 Wine 11 Windows 应用运行时环境。
 
 本项目并不是针对某一个 Windows 软件制作的专用容器，而是希望提供一个：
 
@@ -37,42 +37,87 @@ Wine Runtime 本身通过 Docker Image 提供，而用户自己的 Wine Prefix�
 
 ---
 
-## 当前发布状态
+# Current Release
 
-本项目目前已经完成 GitHub 与 Docker Hub 的公开发布。
+当前公开 Release Candidate：
 
-当前版本：
+```text
+0.1.0-rc1.20260825
+```
+
+发布阶段：
+
+> **Release Candidate / RC1**
+
+该版本是在此前：
 
 ```text
 0.1.0-preview.20260808
 ```
 
-属于：
+公开 Preview 基础上的进一步 Runtime 固化版本。
 
-> **Preview / Public Preview（公开预览版）**
+RC1 主要用于：
 
-目前 Runtime 已经可以用于实际 Windows 应用测试与使用，但项目仍处于早期公开阶段。
+* Runtime 基础环境验收
+* Wine 11 Runtime 验证
+* CJKV 字体环境验证
+* Mono / Gecko Runtime 验证
+* X11 GUI 应用验证
+* Windows 应用安装兼容性测试
+* 后续软件兼容性测试
+* Release Candidate 阶段问题收集
 
-由于项目目前仍在持续完善，以下内容尚未全部完成：
+Docker Image：
 
-* 更完整的软件安装兼容性测试
+```bash
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
+```
+
+---
+
+# Project Status
+
+当前项目已经完成：
+
+* GitHub 公开发布
+* Docker Hub 公开发布
+* Wine 11 Runtime 基础环境
+* Ubuntu 22.04 Runtime 基础环境
+* 32-bit / 64-bit Windows 应用运行环境
+* X11 GUI Runtime
+* CJKV 字体环境
+* Wine 字体注册与替换机制
+* Fcitx5 输入法集成
+* 外部字体注入机制
+* Persistent Wine Prefix
+* Runtime Workspace
+* Runtime Launcher
+* Wine Mono
+* Wine Gecko
+
+当前仍在持续进行：
+
+* 更多 Windows 软件安装测试
+* Windows 软件兼容性测试
 * 软件安装韧性测试
-* 蓝牙模块兼容性测试
-* Wine 底层 Runtime 一键升级
-* Windows 应用双击关联安装
-* 更完善的桌面集成
+* Adobe 等生产力软件兼容性测试
+* Bluetooth / winebth 兼容性测试
+* Windows 应用桌面集成
+* `.exe` 文件关联
+* Runtime 升级与回滚机制
 * 更完整的故障排查文档
-* 更多 Windows 应用的实际兼容性验证
+* 更多 CJKV 应用兼容性验证
 
-因此，本项目当前更适合作为：
+因此：
 
-> **可以实际使用的公开 Preview Runtime，同时持续进行兼容性测试和功能完善。**
+> **RC1 是可实际测试和使用的 Release Candidate，但并不代表所有 Windows 软件或硬件相关功能均已完成兼容性验收。**
 
 ---
 
 # Overview
 
-Wine Runtime Wine11 CJKV Public Edition 基于：
+Wine Runtime Wine11 CJKV 基于：
 
 * Ubuntu 22.04.5 LTS
 * WineHQ Stable 11
@@ -83,6 +128,8 @@ Wine Runtime Wine11 CJKV Public Edition 基于：
 * CJKV 字体环境
 * 外部字体注入机制
 * 持久化 Wine Prefix
+* Wine Mono
+* Wine Gecko
 
 其中 **CJKV** 指：
 
@@ -91,7 +138,7 @@ Wine Runtime Wine11 CJKV Public Edition 基于：
 * 韩文（Korean）
 * 越南文（Vietnamese）
 
-项目重点解决的是 Linux + Wine 环境下 Windows 应用运行过程中常见的：
+项目重点解决 Linux + Wine 环境下 Windows 应用运行过程中常见的：
 
 * CJK 字体
 * 中文环境
@@ -112,10 +159,13 @@ Wine Runtime Wine11 CJKV Public Edition 基于：
 * Docker 化运行
 * 32-bit / 64-bit Windows 应用支持
 * X11 GUI 应用支持
+* Wine Mono
+* Wine Gecko
 * 持久化 Wine Prefix
 * Fcitx5 输入法集成
 * 中文 Locale 环境
 * CJKV 字体支持
+* Wine 字体注册与替换
 * 外部字体注入
 * 持久化应用数据
 * 可重复的 Runtime 配置
@@ -130,7 +180,23 @@ Wine Runtime Wine11 CJKV Public Edition 基于：
 
 # Quick Start
 
-## 方式一：使用 Runtime Launcher
+## 方式一：使用 Docker Image
+
+获取当前 Release Candidate：
+
+```bash
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
+```
+
+建议固定使用明确版本号，而不是依赖不断变化的 `latest` 标签。
+
+这样可以保证：
+
+> **测试环境、部署环境和后续回滚环境使用的是同一个 Runtime 版本。**
+
+---
+
+## 方式二：使用 Runtime Launcher
 
 项目提供：
 
@@ -168,7 +234,7 @@ Runtime Launcher 负责处理 Runtime 启动过程中需要的相关 Docker、X1
 * Shared 数据目录
 * Runtime 日志目录
 
-> **注意：当前 `start.sh` 主要针对项目当前版本及本地 Runtime 镜像环境设计。Docker Hub 公共镜像的直接运行方式请以当前版本实际文档和镜像配置为准。**
+> **注意：`start.sh` 主要针对项目当前 Runtime 配置以及本地环境设计。使用 Docker Hub 公共镜像时，请根据当前版本的 Runtime 配置进行调整。**
 
 ---
 
@@ -290,11 +356,49 @@ Wine Prefix 保存 Windows 应用运行过程中产生的大量持久化状态�
 
 ---
 
+# Wine Mono
+
+Runtime 包含 Wine Mono，用于支持依赖 .NET / Mono Runtime 的 Windows 应用。
+
+Mono Runtime 已经过基础运行环境以及 Windows GUI 应用相关测试。
+
+其中包括：
+
+* C# 程序运行
+* WinForms
+* `System.Windows.Forms`
+* `System.Drawing`
+* Windows GUI / MessageBox
+
+但是：
+
+> **Mono Runtime 可用并不代表所有基于 .NET 的 Windows 软件均可正常运行。**
+
+不同软件可能依赖不同版本的 .NET Framework、Windows API、第三方组件或特定运行库。
+
+因此，具体软件仍需要单独进行兼容性测试。
+
+---
+
+# Wine Gecko
+
+Runtime 包含 Wine Gecko。
+
+Wine Gecko 主要用于支持 Wine 环境中依赖 HTML / Web rendering 的 Windows 应用组件。
+
+与 Mono 一样：
+
+> **Gecko Runtime 存在并正常初始化，不等于所有依赖 WebView / HTML rendering 的 Windows 软件均经过完整兼容性验收。**
+
+具体软件仍需要进行实际测试。
+
+---
+
 # 字体支持
 
 ## Font Policy
 
-Wine Runtime Wine11 CJKV Public Edition **不主动分发微软专有 Windows 系统字体。**
+Wine Runtime Wine11 CJKV **不主动分发微软专有 Windows 系统字体。**
 
 例如：
 
@@ -407,7 +511,7 @@ Runtime 支持处理常见字体格式：
 └── custom-fonts/
 ```
 
-用户可以根据自己的实际需求加入合法获取并拥有使用权的字体。
+用户可以根据自己的实际需求加入合法获得并拥有使用权的字体。
 
 例如：
 
@@ -483,7 +587,7 @@ Windows GUI 应用通过 Docker Container 的 X11 forwarding 显示到 Linux Des
 * X11 环境正常
 * Docker Container 可以访问宿主机 X11 Display
 
-本项目当前主要针对实际 Linux Desktop + X11 环境进行开发和测试。
+项目当前主要针对实际 Linux Desktop + X11 环境进行开发和测试。
 
 Wayland-only、特殊远程桌面环境以及其他非标准图形环境可能需要额外配置。
 
@@ -523,6 +627,26 @@ Windows Application
 
 ---
 
+# Bluetooth / Hardware Compatibility
+
+Bluetooth、USB 以及其他硬件相关 Windows 应用属于独立兼容性领域。
+
+当前项目正在持续测试：
+
+* Wine Bluetooth / `winebth`
+* Bluetooth 设备相关应用
+* USB 设备相关应用
+* Windows 硬件管理软件
+* 依赖 Windows Driver / Device API 的应用
+
+因此当前阶段：
+
+> **不要将 Bluetooth / 硬件兼容性视为 RC1 的全面完成项目。**
+
+实际兼容性需要根据具体硬件、Linux Host、Wine API 以及 Windows 应用分别验证。
+
+---
+
 # Project Structure
 
 当前项目根目录主要包含：
@@ -557,19 +681,12 @@ wine-runtime-wine11-cjkv/
 │   └── 项目资源
 │
 └── archive/
-    └── dockerfiles/
-        └── 历史 Dockerfile
+    └── 历史开发文件
 ```
 
-历史开发阶段使用过的 Dockerfile 已移动至：
+历史开发阶段使用过的 Dockerfile 已移动至 `archive/`。
 
-```text
-archive/dockerfiles/
-```
-
-这些文件主要用于保留项目开发过程中的历史版本、实验记录以及技术演进过程。
-
-当前正式 Runtime 构建使用：
+当前 Runtime 构建使用：
 
 ```text
 Dockerfile
@@ -601,32 +718,46 @@ RESTORE.md
 
 ---
 
-# 当前版本
+# Version History
 
-当前公开版本：
+## 0.1.0-rc1.20260825
 
-```text
-0.1.0-preview.20260808
-```
+**Release Candidate / RC1**
+
+当前最新公开 Release Candidate。
+
+主要目标：
+
+* 固化 Wine 11 Runtime 基础环境
+* 完善 Runtime 初始化流程
+* CJKV 字体 Runtime 初始化
+* Mono / Gecko Runtime
+* X11 GUI 环境
+* 为 Windows 应用兼容性测试提供稳定基线
 
 Docker Image：
 
 ```bash
-docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
 ```
 
-当前版本定位：
+---
 
-> **Preview / Public Preview**
+## 0.1.0-preview.20260808
+
+**Public Preview**
+
+项目首次公开发布版本。
 
 主要用于：
 
-* 公开测试
-* 实际 Windows 应用验证
+* Docker Runtime 公开测试
 * CJKV 环境测试
-* 字体兼容性测试
-* 收集用户反馈
-* 为后续稳定版本积累兼容性数据
+* Wine Prefix 持久化测试
+* Fcitx5 测试
+* Windows 应用兼容性测试
+
+该版本现作为历史 Preview 保留。
 
 ---
 
@@ -640,6 +771,8 @@ docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
 * Docker 化运行
 * 32-bit / 64-bit Windows 应用环境
 * X11 GUI Runtime
+* Wine Mono
+* Wine Gecko
 * CJKV 字体环境
 * CJK 字体注册与替换机制
 * Fcitx5 输入法集成
@@ -649,6 +782,7 @@ docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
 * Runtime Workspace
 * GitHub 开源项目发布
 * Docker Hub 镜像公开发布
+* Release Candidate 基础版本发布
 
 ---
 
@@ -657,8 +791,10 @@ docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
 目前仍在持续完善：
 
 * 更多 Windows 应用兼容性测试
+* Adobe 等生产力软件兼容性测试
 * 软件安装韧性测试
-* 蓝牙模块兼容性
+* Bluetooth 兼容性
+* USB 设备兼容性
 * Wine 底层 Runtime 一键升级
 * Windows 应用双击关联安装
 * 更完善的 Fcitx5 / Rime 配置
@@ -684,6 +820,7 @@ docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-preview.20260808
 ## Windows 应用兼容性
 
 * 更多 Windows 应用兼容性测试
+* Adobe Acrobat 等生产力软件测试
 * 软件安装韧性测试
 * Bluetooth 兼容性
 * USB 设备兼容性
@@ -729,7 +866,7 @@ Linux Host
          └── System Configuration
 ```
 
-Wine Runtime Wine11 CJKV Public Edition 希望探索另一种方式：
+Wine Runtime Wine11 CJKV 希望探索另一种方式：
 
 ```text
 Linux Host
@@ -741,7 +878,8 @@ Linux Host
           ├── Wine 11
           ├── CJKV Environment
           ├── Fcitx5
-          └── Windows Applications
+          ├── Mono
+          └── Gecko
 
 Host Persistent Data
           │
@@ -814,9 +952,46 @@ CJK / 字体表现：
 
 ---
 
+# 支持项目
+
+**Wine Runtime Wine11 CJKV** 是林北松工作室 / Conradtech 的独立开源项目。
+
+如果这个项目帮助你节省了时间、解决了 Linux 下运行 Windows 应用的问题，欢迎通过赞赏支持项目后续的：
+
+* Runtime 开发
+* 兼容性测试
+* 文档完善
+* Bug 排查
+* 社区维护
+* 后续版本开发
+
+## 支持方式
+
+### 支付宝
+
+二维码：
+
+```text
+assets/
+```
+
+### 微信支付
+
+二维码：
+
+```text
+assets/
+```
+
+感谢每一位使用、测试、反馈以及支持这个项目的人 ❤️
+
+> 赞赏属于自愿支持，不代表任何商业服务、技术支持承诺或软件授权。
+
+---
+
 # 免责声明
 
-Wine Runtime Wine11 CJKV Public Edition 是一个基于 Wine 的开源 Windows 应用兼容运行环境。
+Wine Runtime Wine11 CJKV 是一个基于 Wine 的开源 Windows 应用兼容运行环境。
 
 本项目：
 
@@ -834,50 +1009,17 @@ Wine Runtime Wine11 CJKV Public Edition 是一个基于 Wine 的开源 Windows �
 
 ---
 
-# 支持项目
-
-**Wine Runtime Wine11 CJKV Public Edition** 是林北松工作室 / Conradtech 的独立开源项目。
-
-如果这个项目帮助你节省了时间、解决了 Linux 下运行 Windows 应用的问题，欢迎通过赞赏支持项目后续的：
-
-* Runtime 开发
-* 兼容性测试
-* 文档完善
-* Bug 排查
-* 社区维护
-* 后续版本开发
-
-## 支持方式
-
-### 支付宝
-
-将二维码放置于：
-
-```text
-assets/
-```
-
-### 微信支付
-
-将二维码放置于：
-
-```text
-assets/
-```
-
-感谢每一位使用、测试、反馈以及支持这个项目的人 ❤️
-
-> 赞赏属于自愿支持，不代表任何商业服务、技术支持承诺或软件授权。
-
----
-
 # 最后
 
 这是 **林北松工作室 · Conradtech 的第一个公开作品**。
 
-Wine Runtime Wine11 CJKV 目前还不是一个“完成品”。
+Wine Runtime Wine11 CJKV 已经从最初的实验性 Docker Wine 环境进入 **Release Candidate** 阶段。
 
-它更像是一个已经走出实验室、开始接受真实用户测试的 **Public Preview Runtime**。
+RC1 的目标不是宣称：
+
+> “所有 Windows 软件都已经可以运行。”
+
+而是建立一个更加稳定、可重复部署、可验证和可持续迭代的 Wine Runtime 基线。
 
 如果你遇到问题，欢迎提交 Issue。
 
@@ -885,8 +1027,8 @@ Wine Runtime Wine11 CJKV 目前还不是一个“完成品”。
 
 如果你发现某个软件存在字体、输入法、安装或者兼容性问题，同样欢迎反馈。
 
-这些真实环境中的测试结果，会成为后续版本继续完善的重要依据。
+这些真实环境中的测试结果，会成为后续 Runtime 继续完善的重要依据。
 
-**Wine Runtime Wine11 CJKV Public Edition**
+**Wine Runtime Wine11 CJKV**
 
 > **让 Wine 成为 Runtime，而不仅仅是一套安装在宿主机上的软件。**
