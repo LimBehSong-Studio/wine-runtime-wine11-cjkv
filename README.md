@@ -140,7 +140,7 @@ Wine Runtime Wine11 CJKV 基于：
 
 项目重点解决 Linux + Wine 环境下 Windows 应用运行过程中常见的：
 
-* CJK 字体
+* CJKV 字体
 * 中文环境
 * 输入法
 * Wine Prefix 持久化
@@ -969,19 +969,11 @@ CJK / 字体表现：
 
 ### 支付宝
 
-二维码：
-
-```text
-assets/
-```
+![支付宝赞赏码](assets/Alipay.jpg)
 
 ### 微信支付
 
-二维码：
-
-```text
-assets/
-```
+![微信支付赞赏码](assets/Wechatpay.png)
 
 感谢每一位使用、测试、反馈以及支持这个项目的人 ❤️
 
