@@ -969,11 +969,11 @@ CJK / 字体表现：
 
 ### 支付宝
 
-![支付宝赞赏码](assets/Alipay.jpg)
+<p> <img src="assets/Alipay.jpg" alt="支付宝赞赏码" width="180"> </p>
 
 ### 微信支付
 
-![微信支付赞赏码](assets/Wechatpay.png)
+<p> <img src="assets/Wechatpay.png" alt="微信支付赞赏码" width="180"> </p>
 
 感谢每一位使用、测试、反馈以及支持这个项目的人 ❤️
 
