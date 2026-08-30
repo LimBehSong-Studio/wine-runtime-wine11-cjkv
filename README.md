@@ -4,13 +4,13 @@
 
 **Docker 化 Wine 11 + CJKV Windows 应用运行时环境**
 
-**当前版本：** `0.1.0-rc1.20260825`
-**发布阶段：** `Release Candidate / RC1`
+**当前版本：** `0.1.0-rc2.20260830`
+**发布阶段：** `Release Candidate / CJKFIX RC2`
 
 Docker Image：
 
 ```bash
-docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc2.20260830
 ```
 
 ---
@@ -42,22 +42,55 @@ Wine Runtime 本身通过 Docker Image 提供，而用户自己的 Wine Prefix�
 当前公开 Release Candidate：
 
 ```text
-0.1.0-rc1.20260825
+0.1.0-rc2.20260830
 ```
 
 发布阶段：
 
-> **Release Candidate / RC1**
+> **Release Candidate / CJKFIX RC2**
 
-该版本是在此前：
+CJKFIX RC2 是在此前 RC1 基线：
+
+```text
+0.1.0-rc1.20260825
+```
+
+基础上的 CJK 字体修复版本，RC1 又基于公开 Preview：
 
 ```text
 0.1.0-preview.20260808
 ```
 
-公开 Preview 基础上的进一步 Runtime 固化版本。
+本版本已实际完成并提交的修复：
 
-RC1 主要用于：
+* Noto Sans CJK JP → Regular face mapping
+* Noto Sans CJK KR → Regular face mapping
+* Noto Sans CJK SC → Regular face mapping
+* Noto Sans CJK TC → Regular face mapping
+
+即修复 Wine Font Registry 中 Noto Sans CJK 各 family 的 self-map，使应用请求 Noto Sans CJK 字体 family 时正确映射到对应的 Regular face。
+
+Git commit：
+
+```text
+c7d012a9262c97582455424e8f4c947b3f64ce93
+```
+
+Docker Image：
+
+```bash
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc2.20260830
+```
+
+Docker Image Digest：
+
+```text
+sha256:cea91c6ed69f139cf1c0bf009238c64d27a8ae00e7d1fb67c4bcb8bcc2f3e9df
+```
+
+## RC1 基线
+
+RC1 此前主要用于：
 
 * Runtime 基础环境验收
 * Wine 11 Runtime 验证
@@ -68,7 +101,7 @@ RC1 主要用于：
 * 后续软件兼容性测试
 * Release Candidate 阶段问题收集
 
-Docker Image：
+RC1 历史详见下方 Version History，RC1 Docker Image 仍保留：
 
 ```bash
 docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
@@ -185,7 +218,7 @@ Wine Runtime Wine11 CJKV 基于：
 获取当前 Release Candidate：
 
 ```bash
-docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc2.20260830
 ```
 
 建议固定使用明确版本号，而不是依赖不断变化的 `latest` 标签。
@@ -720,11 +753,46 @@ RESTORE.md
 
 # Version History
 
+## 0.1.0-rc2.20260830
+
+**CJKFIX RC2 / Release Candidate**
+
+当前最新公开 Release Candidate，对应 CJKFIX RC2。
+
+本版本在 RC1 基线基础上实际完成并提交：
+
+* Noto Sans CJK JP → Noto Sans CJK JP Regular
+* Noto Sans CJK KR → Noto Sans CJK KR Regular
+* Noto Sans CJK SC → Noto Sans CJK SC Regular
+* Noto Sans CJK TC → Noto Sans CJK TC Regular
+
+即 Wine Font Registry 中 Noto Sans CJK 各 family → Regular face 的 self-map 修复。
+
+Git commit：
+
+```text
+c7d012a9262c97582455424e8f4c947b3f64ce93
+```
+
+Docker Image：
+
+```bash
+docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc2.20260830
+```
+
+Docker Image Digest：
+
+```text
+sha256:cea91c6ed69f139cf1c0bf009238c64d27a8ae00e7d1fb67c4bcb8bcc2f3e9df
+```
+
+---
+
 ## 0.1.0-rc1.20260825
 
 **Release Candidate / RC1**
 
-当前最新公开 Release Candidate。
+上一公开 Release Candidate（RC1 基线），现已被 0.1.0-rc2.20260830 取代。
 
 主要目标：
 
@@ -783,6 +851,7 @@ docker pull conradtech/wine-runtime-wine11-cjkv:0.1.0-rc1.20260825
 * GitHub 开源项目发布
 * Docker Hub 镜像公开发布
 * Release Candidate 基础版本发布
+* CJKFIX RC2（Noto Sans CJK family → Regular face mapping 修复）
 
 ---
 
