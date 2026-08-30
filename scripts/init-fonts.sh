@@ -149,6 +149,10 @@ MS PGothic=Noto Sans CJK JP
 微软雅黑=Noto Sans CJK SC
 宋体=Noto Serif CJK SC
 黑体=Noto Sans CJK SC
+Noto Sans CJK SC=Noto Sans CJK SC Regular
+Noto Sans CJK JP=Noto Sans CJK JP Regular
+Noto Sans CJK KR=Noto Sans CJK KR Regular
+Noto Sans CJK TC=Noto Sans CJK TC Regular
 "
 
 
